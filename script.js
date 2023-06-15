@@ -1,11 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     const tableBody = document.querySelector('#data-table tbody');
     const paginationContainer = document.querySelector('#pagination');
+    const searchBar = document.querySelector('#search-bar');
+    const searchInput = document.querySelector('#search-input');
+    const searchButton = document.querySelector('#search-button');
   
     const itemsPerPage = 10;
     let currentPage = 1;
     let data = [];
     const itemDataArray = [];
+    let searchQuery = '';
   
     fetch('http://universities.hipolabs.com/search?country=United+States')
       .then(response => response.json())
@@ -40,7 +44,16 @@ document.addEventListener('DOMContentLoaded', function() {
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;
   
-      const itemsToDisplay = itemDataArray.slice(startIndex, endIndex);
+      let itemsToDisplay = itemDataArray;
+  
+      if (searchQuery) {
+        itemsToDisplay = itemsToDisplay.filter(item => {
+          const name = item.Name.toLowerCase();
+          return name.includes(searchQuery.toLowerCase());
+        });
+      }
+  
+      itemsToDisplay = itemsToDisplay.slice(startIndex, endIndex);
   
       itemsToDisplay.forEach(item => {
         const row = document.createElement('tr');
@@ -107,4 +120,17 @@ document.addEventListener('DOMContentLoaded', function() {
         paginationContainer.appendChild(nextEllipsis);
       }
     }
+  
+    function performSearch() {
+      searchQuery = searchInput.value.trim();
+      currentPage = 1;
+      renderTable();
+      renderPagination();
+    }
+  
+    searchButton.addEventListener('click', performSearch);
+    searchBar.addEventListener('submit', function(event) {
+      event.preventDefault();
+      performSearch();
+    });
   });

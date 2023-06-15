@@ -33,3 +33,7 @@ span{
     color: #fff;
     border-color: #007bff;
 }
+.search-bar{
+    padding-left: 75%;
+    padding-bottom: 2%;
+}
